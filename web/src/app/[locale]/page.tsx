@@ -14,12 +14,13 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'sans-serif', backgroundColor: '#FFFFFF' }}>
       
-      {/* Forçar sumiço dos menus e rodapés originais do MIT */}
+      {/* Esconder de forma agressiva os menus e rodapés originais do MIT */}
       <style dangerouslySetInnerHTML={{__html: `
-        header, footer, nav, .footer, .header, [class*="Header"], [class*="Footer"], [class*="nav"] { display: none !important; }
+        header, footer, nav, .footer, .header, [class*="Header"], [class*="Footer"], [class*="nav"], [class*="menu"] { display: none !important; }
+        body { background-color: #FFFFFF !important; }
       `}} />
 
-      {/* Topo com Espaço para Logo */}
+      {/* Topo Carmim com Espaço para Logo */}
       <div style={{ backgroundColor: '#960018', color: 'white', padding: '50px 20px', textAlign: 'center' }}>
         <div style={{ 
           width: '130px', height: '130px', backgroundColor: '#FFFFFF', borderRadius: '50%', 
@@ -60,15 +61,15 @@ export default function HomePage() {
             <h2 style={{ color: '#960018', fontSize: '1.8rem', marginBottom: '25px', textAlign: 'center', fontWeight: 'bold' }}>Preencha para iniciar</h2>
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: 'bold' }}>Nome completo</label>
-              <input type="text" required placeholder="Como você gosta de ser chamada" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+              <input type="text" required placeholder="Como você gosta de ser chamada" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} />
             </div>
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: 'bold' }}>WhatsApp</label>
-              <input type="tel" required placeholder="(00) 00000-0000" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+              <input type="tel" required placeholder="(00) 00000-0000" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} />
             </div>
             <div style={{ marginBottom: '30px' }}>
               <label style={{ display: 'block', marginBottom: '8px', color: '#444', fontWeight: 'bold' }}>E-mail</label>
-              <input type="email" required placeholder="Onde você receberá seu relatório" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+              <input type="email" required placeholder="Onde você receberá seu relatório" style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '1rem', boxSizing: 'border-box' }} />
             </div>
             <button type="submit" style={{ width: '100%', padding: '15px', backgroundColor: '#FFD700', color: '#960018', fontWeight: 'bold', fontSize: '1.2rem', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
               Cadastrar e Continuar
@@ -80,8 +81,7 @@ export default function HomePage() {
             <p style={{ fontSize: '1.1rem', color: '#555', marginBottom: '30px', lineHeight: '1.6' }}>
               O questionário a seguir levará cerca de 10 a 15 minutos. Responda no seu ritmo. Ao final, o relatório será encaminhado para o seu e-mail.
             </p>
-            {/* Aqui alteramos a rota para apontar para o português padrão do sistema original */}
-            <Link href="/pt/test" style={{ display: 'inline-block', padding: '15px 30px', backgroundColor: '#960018', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none', borderRadius: '6px' }}>
+            <Link href="./test" style={{ display: 'inline-block', padding: '15px 30px', backgroundColor: '#960018', color: 'white', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none', borderRadius: '6px' }}>
               Começar o Questionário
             </Link>
           </div>

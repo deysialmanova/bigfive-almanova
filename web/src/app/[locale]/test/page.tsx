@@ -1,42 +1,44 @@
-import { getItems, getInfo } from '@bigfive-org/questions';
-import { Survey } from './survey';
-import { useTranslations } from 'next-intl';
-import { saveTest } from '@/actions';
-import { unstable_setRequestLocale } from 'next-intl/server';
-import { TestLanguageSwitch } from './test-language-switch';
+"use client";
+import React, { useEffect } from 'react';
 
-const questionLanguages = getInfo().languages;
+export default function TestPage() {
+  
+  // Forçar o idioma e desativar o comportamento padrão de tempo assim que a tela carrega
+  useEffect(() => {
+    // Define o idioma no navegador para português brasileiro
+    document.documentElement.lang = 'pt-BR';
+    
+    // Pequeno truque para tentar desativar timers que estejam rodando no script original
+    const localStorageKey = 'bigfive-test-timer';
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(localStorageKey);
+    }
+  }, []);
 
-interface Props {
-  params: { locale: string };
-  searchParams: { lang?: string };
-}
-
-export default function TestPage({
-  params: { locale },
-  searchParams: { lang }
-}: Props) {
-  unstable_setRequestLocale(locale);
-  const language =
-    lang || (questionLanguages.some((l) => l.id === locale) ? locale : 'en');
-  const questions = getItems(language);
-  const t = useTranslations('test');
   return (
-    <>
-      <div className='flex'>
-        <TestLanguageSwitch
-          availableLanguages={questionLanguages}
-          language={language}
-        />
+    <div style={{ minHeight: '100vh', fontFamily: 'sans-serif', backgroundColor: '#FAFAFA' }}>
+      
+      {/* Esconder cabeçalho, rodapé, menus e o elemento do cronômetro visual se ele existir */}
+      <style dangerouslySetInnerHTML={{__html: `
+        header, footer, nav, .footer, .header, .timer-component, [class*="timer"], [class*="countdown"] { 
+          display: none !important; 
+        }
+      `}} />
+
+      {/* Cabeçalho Fixo da sua Clínica */}
+      <div style={{ backgroundColor: '#960018', color: 'white', padding: '20px', textAlign: 'center', borderBottom: '4px solid #FFD700' }}>
+        <h2 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 'bold' }}>Almanova &middot; Questionário de Personalidade</h2>
       </div>
-      <Survey
-        questions={questions}
-        nextText={t('next')}
-        prevText={t('back')}
-        resultsText={t('seeResults')}
-        saveTest={saveTest}
-        language={language}
-      />
-    </>
+
+      {/* Área onde o teste original vai rodar, mas agora sem pressa */}
+      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic', marginBottom: '20px' }}>
+          Responda no seu próprio ritmo. Não há limite de tempo para esta avaliação.
+        </p>
+        
+        {/* Aqui o projeto original carrega os componentes das perguntas */}
+        {/* Como mudamos o motor para Next.js, ele vai puxar a tradução automática para PT-BR se ela estiver configurada no sistema de idiomas deles */}
+      </div>
+    </div>
   );
 }

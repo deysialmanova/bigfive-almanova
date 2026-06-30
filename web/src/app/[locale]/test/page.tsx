@@ -42,11 +42,11 @@ export default function TestPage() {
     </div>
   );
 }
-// Cole isso na última linha do arquivo para sumir com o cronômetro e menus
+// Forçar a remoção visual do cronômetro, cabeçalho e rodapé do MIT
 if (typeof window !== 'undefined') {
   const style = document.createElement('style');
   style.innerHTML = `
-    header, footer, nav, .footer, .header, [class*="timer"], [class*="countdown"], .v-counter { 
+    header, footer, nav, .footer, .header, [class*="Header"], [class*="Footer"], [class*="nav"], [class*="timer"], [class*="countdown"], .v-counter, [class*="Timer"] { 
       display: none !important; 
     }
   `;

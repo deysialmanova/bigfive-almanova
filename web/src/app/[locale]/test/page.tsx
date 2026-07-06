@@ -18,7 +18,7 @@ export default function TestPage({
 }: Props) {
   unstable_setRequestLocale(locale);
   const language =
-    lang || (questionLanguages.some((l) => l.id === locale) ? locale : 'en');
+    lang || (questionLanguages.some((l) => l.id === locale) ? locale : 'pt');
   const questions = getItems(language);
   const t = useTranslations('test');
 

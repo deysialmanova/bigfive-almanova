@@ -5,7 +5,7 @@ import { locales } from './config/site';
 export default createMiddleware({
   locales,
   localePrefix,
-  defaultLocale: 'en'
+  defaultLocale: 'pt'
 });
 
 export const config = {

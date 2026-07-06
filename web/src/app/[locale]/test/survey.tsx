@@ -142,16 +142,29 @@ export const Survey = ({
   async function submitTest() {
     setLoading(true);
     confetti({});
+
+    let userInfo;
+    try {
+      const stored = localStorage.getItem('almanova_user_info');
+      if (stored) {
+        userInfo = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error('Erro ao recuperar almanova_user_info', e);
+    }
+
     const result = await saveTest({
       testId: 'b5-120',
       lang: language,
       invalid: false,
       timeElapsed: seconds,
       dateStamp: new Date(),
-      answers
+      answers,
+      userInfo
     });
     localStorage.removeItem('inProgress');
     localStorage.removeItem('b5data');
+    localStorage.removeItem('almanova_user_info');
     console.log(result);
     localStorage.setItem('resultId', result.id);
     router.push(`/result/${result.id}`);
@@ -193,7 +206,7 @@ export const Survey = ({
         value={progress}
         className='max-w'
         showValueLabel={true}
-        label={formatTimer(seconds)}
+        label={`Progresso: ${progress}%`}
         minValue={0}
         maxValue={100}
         size='lg'

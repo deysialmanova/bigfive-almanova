@@ -1,54 +1,55 @@
-"use client";
-import React, { useEffect } from 'react';
+import { getItems, getInfo } from '@bigfive-org/questions';
+import { Survey } from './survey';
+import { useTranslations } from 'next-intl';
+import { saveTest } from '@/actions';
+import { unstable_setRequestLocale } from 'next-intl/server';
+import TestSetup from './test-setup';
 
-export default function TestPage() {
-  
-  // Forçar o idioma e desativar o comportamento padrão de tempo assim que a tela carrega
-  useEffect(() => {
-    // Define o idioma no navegador para português brasileiro
-    document.documentElement.lang = 'pt-BR';
-    
-    // Pequeno truque para tentar desativar timers que estejam rodando no script original
-    const localStorageKey = 'bigfive-test-timer';
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(localStorageKey);
-    }
-  }, []);
+const questionLanguages = getInfo().languages;
+
+interface Props {
+  params: { locale: string };
+  searchParams: { lang?: string };
+}
+
+export default function TestPage({
+  params: { locale },
+  searchParams: { lang }
+}: Props) {
+  unstable_setRequestLocale(locale);
+  const language =
+    lang || (questionLanguages.some((l) => l.id === locale) ? locale : 'en');
+  const questions = getItems(language);
+  const t = useTranslations('test');
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'sans-serif', backgroundColor: '#FAFAFA' }}>
+    <div className="min-h-screen bg-slate-50 pb-20">
+      <TestSetup />
       
-      {/* Esconder cabeçalho, rodapé, menus e o elemento do cronômetro visual se ele existir */}
-      <style dangerouslySetInnerHTML={{__html: `
-        header, footer, nav, .footer, .header, .timer-component, [class*="timer"], [class*="countdown"] { 
-          display: none !important; 
-        }
-      `}} />
-
-      {/* Cabeçalho Fixo da sua Clínica */}
-      <div style={{ backgroundColor: '#960018', color: 'white', padding: '20px', textAlign: 'center', borderBottom: '4px solid #FFD700' }}>
-        <h2 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 'bold' }}>Almanova &middot; Questionário de Personalidade</h2>
+      {/* Cabeçalho Clínico Almanova */}
+      <div className="bg-[#871217] text-white py-5 px-4 text-center border-b-4 border-[#FFBA1F] shadow-md">
+        <h2 className="text-xl md:text-2xl font-semibold tracking-wide">
+          Almanova &bull; Questionário de Personalidade
+        </h2>
+        <p className="text-[10px] font-bold text-slate-200 mt-1.5 uppercase tracking-widest">
+          Terapeuta - Deysi Dias
+        </p>
       </div>
 
-      {/* Área onde o teste original vai rodar, mas agora sem pressa */}
-      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-        <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic', marginBottom: '20px' }}>
-          Responda no seu próprio ritmo. Não há limite de tempo para esta avaliação.
+      <div className="max-w-4xl mx-auto px-6 py-8 mt-6 bg-white rounded-xl shadow-sm border border-slate-100">
+        <p className="text-center text-slate-500 italic mb-6">
+          Responda com calma no seu próprio ritmo. Não há limite de tempo.
         </p>
         
-        {/* Aqui o projeto original carrega os componentes das perguntas */}
-        {/* Como mudamos o motor para Next.js, ele vai puxar a tradução automática para PT-BR se ela estiver configurada no sistema de idiomas deles */}
+        <Survey
+          questions={questions}
+          nextText={t('next')}
+          prevText={t('back')}
+          resultsText={t('seeResults')}
+          saveTest={saveTest}
+          language={language}
+        />
       </div>
     </div>
   );
-}
-// Forçar a remoção visual do cronômetro, cabeçalho e rodapé do MIT
-if (typeof window !== 'undefined') {
-  const style = document.createElement('style');
-  style.innerHTML = `
-    header, footer, nav, .footer, .header, [class*="Header"], [class*="Footer"], [class*="nav"], [class*="timer"], [class*="countdown"], .v-counter, [class*="Timer"] { 
-      display: none !important; 
-    }
-  `;
-  document.head.appendChild(style);
 }

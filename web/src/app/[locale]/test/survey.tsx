@@ -153,21 +153,27 @@ export const Survey = ({
       console.error('Erro ao recuperar almanova_user_info', e);
     }
 
-    const result = await saveTest({
-      testId: 'b5-120',
-      lang: language,
-      invalid: false,
-      timeElapsed: seconds,
-      dateStamp: new Date(),
-      answers,
-      userInfo
-    });
-    localStorage.removeItem('inProgress');
-    localStorage.removeItem('b5data');
-    localStorage.removeItem('almanova_user_info');
-    console.log(result);
-    localStorage.setItem('resultId', result.id);
-    router.push(`/result/${result.id}`);
+    try {
+      const result = await saveTest({
+        testId: 'b5-120',
+        lang: language,
+        invalid: false,
+        timeElapsed: seconds,
+        dateStamp: new Date(),
+        answers,
+        userInfo
+      });
+      localStorage.removeItem('inProgress');
+      localStorage.removeItem('b5data');
+      localStorage.removeItem('almanova_user_info');
+      console.log(result);
+      localStorage.setItem('resultId', result.id);
+      router.push(`/result/${result.id}`);
+    } catch (error) {
+      console.error(error);
+      alert("Não foi possível salvar o seu teste. Detalhe do erro: " + (error instanceof Error ? error.message : String(error)) + "\n\nPor favor, garanta que a conexão com o banco de dados (DB_URL) está configurada corretamente nas variáveis de ambiente do projeto.");
+      setLoading(false);
+    }
   }
 
   function dataInLocalStorage() {

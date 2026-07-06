@@ -86,14 +86,18 @@ export default function HomePage() {
         {/* Coluna da Esquerda: Marca e Textos */}
         <div className="lg:col-span-7 space-y-6 text-left">
           
-          {/* Logo Minimalista Almanova com Dados da Terapeuta */}
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#871217] flex items-center justify-center text-white font-bold text-lg border-2 border-[#FFBA1F] shadow-md">
-              A
-            </div>
+          {/* Logo Almanova com Dados da Terapeuta */}
+          <div className="flex items-center space-x-4 mb-4">
+            <img 
+              src="/logo-almanova.png" 
+              alt="Logo Almanova" 
+              className="w-16 h-16 object-contain rounded-full border border-slate-100 shadow-sm"
+            />
             <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-widest text-[#871217] font-serif leading-none">ALMANOVA</span>
-              <span className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wider">Terapeuta - Deysi Dias</span>
+              <span className="text-2xl font-bold tracking-wide text-[#871217] font-serif leading-none">Deysi Dias</span>
+              <span className="text-xs font-semibold text-slate-500 mt-1.5 leading-tight max-w-sm">
+                Terapeuta, Treinadora e Instrutora de Yoga &amp; respiração consciente
+              </span>
             </div>
           </div>
 

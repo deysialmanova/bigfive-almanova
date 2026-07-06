@@ -17,8 +17,12 @@ export default function TestPage({
   searchParams: { lang }
 }: Props) {
   unstable_setRequestLocale(locale);
+
+  // Mapeia o locale do Next.js/next-intl para o ID correspondente da biblioteca de questões
+  const targetLocale = locale === 'pt' ? 'pt-br' : locale;
   const language =
-    lang || (questionLanguages.some((l) => l.id === locale) ? locale : 'pt');
+    lang || (questionLanguages.some((l: any) => l.id === targetLocale) ? targetLocale : 'en');
+
   const questions = getItems(language);
   const t = useTranslations('test');
 

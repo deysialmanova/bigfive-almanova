@@ -10,6 +10,7 @@ import generateResult, {
   Language,
   Domain
 } from '@bigfive-org/results';
+import { getItems } from '@bigfive-org/questions';
 
 const collectionName = process.env.DB_COLLECTION || 'results';
 const resultLanguages = getInfo().languages;
@@ -33,31 +34,79 @@ export async function getTestResult(
 ): Promise<Report | undefined> {
   'use server';
   try {
-    const query = { _id: new ObjectId(id) };
-    const db = await connectToDatabase();
-    const collection = db.collection(collectionName);
-    const report = await collection.findOne(query);
-    if (!report) {
-      console.error(`The test results with id ${id} are not found!`);
-      throw new B5Error({
-        name: 'NotFoundError',
-        message: `The test results with id ${id} is not found in the database!`
-      });
+    // 1. Tenta tratar o 'id' como um payload codificado em Base64URL
+    if (id.length > 24) {
+      try {
+        const decodedString = Buffer.from(
+          id.replace(/-/g, '+').replace(/_/g, '/'),
+          'base64'
+        ).toString('utf8');
+        const data = JSON.parse(decodedString);
+        
+        if (data && data.scores && data.lang) {
+          const questions = getItems(data.lang);
+          const answers = questions.map((q, index) => {
+            const score = Number(data.scores[index]) || 3;
+            return {
+              id: q.id,
+              score,
+              domain: q.domain,
+              facet: q.facet
+            };
+          });
+
+          const selectedLanguage = language || data.lang;
+          const scores = calculateScore({ answers: answers as any });
+          const results = generateResult({ lang: selectedLanguage, scores });
+
+          return {
+            id,
+            timestamp: data.date || Date.now(),
+            availableLanguages: resultLanguages,
+            language: selectedLanguage,
+            results,
+            userInfo: data.user
+          };
+        }
+      } catch (e) {
+        console.warn('Id is longer than 24 chars but failed to decode as Base64 payload. Falling back to DB...', e);
+      }
     }
-    const selectedLanguage =
-      language ||
-      (!!resultLanguages.find((l) => l.id == report.lang) ? report.lang : 'en');
-    const scores = calculateScore({ answers: report.answers });
-    const results = generateResult({ lang: selectedLanguage, scores });
-    return {
-      id: report._id.toString(),
-      timestamp: report.dateStamp,
-      availableLanguages: resultLanguages,
-      language: selectedLanguage,
-      results,
-      userInfo: report.userInfo
-    };
+
+    // 2. Se for um ObjectId válido de 24 caracteres hex, tenta buscar no banco (retrocompatibilidade)
+    if (ObjectId.isValid(id)) {
+      const query = { _id: new ObjectId(id) };
+      const db = await connectToDatabase();
+      const collection = db.collection(collectionName);
+      const report = await collection.findOne(query);
+      if (!report) {
+        console.error(`The test results with id ${id} are not found!`);
+        throw new B5Error({
+          name: 'NotFoundError',
+          message: `The test results with id ${id} is not found in the database!`
+        });
+      }
+      const selectedLanguage =
+        language ||
+        (!!resultLanguages.find((l) => l.id == report.lang) ? report.lang : 'en');
+      const scores = calculateScore({ answers: report.answers });
+      const results = generateResult({ lang: selectedLanguage, scores });
+      return {
+        id: report._id.toString(),
+        timestamp: report.dateStamp,
+        availableLanguages: resultLanguages,
+        language: selectedLanguage,
+        results,
+        userInfo: report.userInfo
+      };
+    }
+
+    throw new B5Error({
+      name: 'NotFoundError',
+      message: `The test results with id ${id} are not valid or not found!`
+    });
   } catch (error) {
+    console.error('Error in getTestResult Server Action:', error);
     if (error instanceof B5Error) {
       throw error;
     }
@@ -68,19 +117,38 @@ export async function getTestResult(
 export async function saveTest(testResult: DbResult) {
   'use server';
   try {
-    const db = await connectToDatabase();
-    const collection = db.collection(collectionName);
-    const result = await collection.insertOne(testResult);
-    
-    // Dispara o envio do resultado por e-mail de forma assíncrona
-    sendTestResultEmail(testResult, result.insertedId.toString()).catch(console.error);
+    // 1. Gera um payload compacto com as respostas ordenadas conforme a lista de questões
+    const questions = getItems(testResult.lang);
+    const scores = questions
+      .map((q) => {
+        const ans = testResult.answers.find((a) => a.id === q.id);
+        return ans ? ans.score : 3;
+      })
+      .join('');
 
-    return { id: result.insertedId.toString() };
+    const payloadObj = {
+      lang: testResult.lang,
+      time: testResult.timeElapsed,
+      date: new Date(testResult.dateStamp).getTime(),
+      scores,
+      user: testResult.userInfo
+    };
+
+    const base64Payload = Buffer.from(JSON.stringify(payloadObj), 'utf8')
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+
+    // 2. Dispara o envio de e-mail de forma assíncrona com o payload no link de visualização
+    sendTestResultEmail(testResult, base64Payload).catch(console.error);
+
+    return { id: base64Payload };
   } catch (error) {
     console.error(error);
     throw new B5Error({
       name: 'SavingError',
-      message: 'Failed to save test result!'
+      message: 'Failed to process test result!'
     });
   }
 }

@@ -11,6 +11,7 @@ import { supportEmail } from '@/config/site';
 import ShareBar from '@/components/share-bar';
 import { DomainTabs } from './domain-tabs';
 import { Chip } from '@nextui-org/react';
+import { formatId } from '@/lib/helpers';
 
 export async function generateMetadata({
   params: { locale }
@@ -34,11 +35,15 @@ export default async function ResultPage({
   searchParams
 }: ResultPageParams) {
   let report;
+  const formattedId = /^[0-9a-fA-F]{24}$/.test(params.id) ? params.id.toLowerCase() : params.id;
 
   try {
-    report = await getTestResult(params.id.substring(0, 24), searchParams.lang);
+    report = await getTestResult(formattedId, searchParams.lang);
   } catch (error) {
-    throw new Error('Could not retrieve report');
+    const isNotFound = error instanceof Error && (error.name === 'NotFoundError' || error.message.includes('not found'));
+    if (!isNotFound) {
+      throw new Error('Could not retrieve report');
+    }
   }
 
   if (!report)

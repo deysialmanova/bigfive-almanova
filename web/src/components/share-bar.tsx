@@ -13,7 +13,11 @@ interface ShareBarProps {
 export default function ShareBar({ report }: ShareBarProps) {
   const [_, copy] = useCopyToClipboard();
 
-  const handleCopy = (text: string) => async () => await copy(text);
+  const handleCopy = () => async () => {
+    if (typeof window !== 'undefined') {
+      await copy(window.location.href);
+    }
+  };
 
   return (
     <>
@@ -64,7 +68,7 @@ export default function ShareBar({ report }: ShareBarProps) {
           radius='full'
           size='md'
           variant='light'
-          onPress={handleCopy(`https://bigfive-test.com/result/${report.id}`)}
+          onPress={handleCopy()}
         >
           <CopyIcon size={42} />
         </Button>

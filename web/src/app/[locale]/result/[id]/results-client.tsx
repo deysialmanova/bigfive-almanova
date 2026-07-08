@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Chip, Button, Accordion, AccordionItem } from '@nextui-org/react';
 import { WhatsAppFloatingButton } from './whatsapp-button';
@@ -101,6 +102,23 @@ const getIntensityBadge = (scoreText: string) => {
 
 export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
   const t = useTranslations('results');
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    try {
+      setFormattedDate(
+        new Date(report.timestamp).toLocaleDateString('pt-BR', {
+          timeZone: 'America/Sao_Paulo'
+        })
+      );
+    } catch (e) {
+      try {
+        setFormattedDate(new Date(report.timestamp).toLocaleDateString('pt-BR'));
+      } catch (err) {
+        setFormattedDate('');
+      }
+    }
+  }, [report.timestamp]);
 
   return (
     <div className="pb-20 max-w-4xl mx-auto px-4">
@@ -121,7 +139,7 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <Chip size="lg" variant="flat" color="warning" className="bg-[#FFBA1F]/10 text-[#871217] border border-[#FFBA1F]/20 font-semibold">
-          Data do Teste: {new Date(report.timestamp).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+          Data do Teste: {formattedDate || '...'}
         </Chip>
         
         <div className="print:hidden">
@@ -220,7 +238,7 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
                     }}
                   >
                     <div className="flex flex-col gap-4 mt-2">
-                      {domain.facets.map((facet, fIndex) => (
+                      {domain.facets && domain.facets.map((facet, fIndex) => (
                         <div key={fIndex} className="flex flex-col gap-1">
                           <div className="flex justify-between items-center text-sm">
                             <span className="font-medium text-slate-700">

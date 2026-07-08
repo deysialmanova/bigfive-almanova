@@ -16,8 +16,8 @@ export const RadarChart = ({ results }: RadarChartProps) => {
 
   // Map results to obtain names: Abertura, Conscienciosidade, Extroversão, Amabilidade, Neuroticismo
   const categories = results.map((r) => {
-    const title = r.title;
-    if (title.toLowerCase().startsWith('abertura')) return 'Abertura';
+    const title = r.title || '';
+    if (title && title.toLowerCase().startsWith('abertura')) return 'Abertura';
     return title;
   });
 

@@ -31,10 +31,8 @@ export default async function ResultPage({
   try {
     report = await getTestResult(formattedId, searchParams.lang);
   } catch (error) {
-    const isNotFound = error instanceof Error && (error.name === 'NotFoundError' || error.message.includes('not found'));
-    if (!isNotFound) {
-      throw new Error('Could not retrieve report');
-    }
+    console.error('Error fetching report:', error);
+    report = undefined;
   }
 
   if (!report)

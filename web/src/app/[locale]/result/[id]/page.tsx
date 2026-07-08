@@ -12,6 +12,7 @@ import ShareBar from '@/components/share-bar';
 import { DomainTabs } from './domain-tabs';
 import { Chip } from '@nextui-org/react';
 import { formatId } from '@/lib/helpers';
+import { WhatsAppFloatingButton } from './whatsapp-button';
 
 export async function generateMetadata({
   params: { locale }
@@ -76,7 +77,11 @@ const Results = ({ report, showExpanded }: ResultsProps) => {
             availableLanguages={report.availableLanguages}
           />
         </div>
-        <Chip>{new Date(report.timestamp).toLocaleDateString()}</Chip>
+        <Chip>
+          {new Date(report.timestamp).toLocaleDateString('pt-BR', {
+            timeZone: 'America/Sao_Paulo'
+          })}
+        </Chip>
       </div>
 
       {/* Dados Completos do Respondente (Almanova) */}
@@ -139,6 +144,8 @@ const Results = ({ report, showExpanded }: ResultsProps) => {
         showExpanded={!!showExpanded}
         scoreText={t('score')}
       />
+
+      <WhatsAppFloatingButton />
     </div>
   );
 };

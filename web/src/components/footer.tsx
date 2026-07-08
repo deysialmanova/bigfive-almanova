@@ -1,14 +1,5 @@
-import { Link as NextUILink } from '@nextui-org/link';
 import { Link } from '../navigation';
-
-import {
-  TwitterIcon,
-  GithubIcon,
-  LinkedInIcon,
-  FacebookIcon,
-  Logo
-} from '@/components/icons';
-import { siteConfig } from '@/config/site';
+import { Logo } from '@/components/icons';
 
 interface FooterProps {
   footerLinks: {
@@ -22,40 +13,8 @@ export default function Footer({ footerLinks }: FooterProps) {
   return (
     <footer className='container mx-auto max-w-7xl py-24 px-12'>
       <div className='container mx-auto flex justify-between'>
-        <div className='w-1/2'>
-          <span className='text-center'>
-            <Logo />
-          </span>
-        </div>
-        <div className='w-1/2 flex justify-end'>
-          <NextUILink
-            isExternal
-            href={siteConfig.links.twitter}
-            aria-label='Twitter'
-          >
-            <TwitterIcon size={48} className='text-default-500' />
-          </NextUILink>
-          <NextUILink
-            isExternal
-            href={siteConfig.links.github}
-            aria-label='Github'
-          >
-            <GithubIcon size={48} className='text-default-500' />
-          </NextUILink>
-          <NextUILink
-            isExternal
-            href={siteConfig.links.linkedIn}
-            aria-label='LinkedIn'
-          >
-            <LinkedInIcon size={48} className='text-default-500' />
-          </NextUILink>
-          <NextUILink
-            isExternal
-            href={siteConfig.links.facebook}
-            aria-label='Facebook'
-          >
-            <FacebookIcon size={48} className='text-default-500' />
-          </NextUILink>
+        <div className='w-full text-center'>
+          <Logo />
         </div>
       </div>
 

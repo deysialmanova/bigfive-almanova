@@ -2,103 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Chip, Button, Accordion, AccordionItem } from '@nextui-org/react';
+import { Chip, Button } from '@nextui-org/react';
+import { Snippet } from '@nextui-org/snippet';
 import { WhatsAppFloatingButton } from './whatsapp-button';
-import { RadarChart } from '@/components/radar-chart';
+import { BarChart } from '@/components/bar-chart';
 import { Logo } from '@/components/icons';
 import { ReportLanguageSwitch } from './report-language-switch';
 import { Report } from '@/actions';
+import { Link } from '@/navigation';
+import ShareBar from '@/components/share-bar';
+import { DomainTabs } from './domain-tabs';
 
 interface ResultsClientProps {
   report: Report;
   showExpanded?: boolean;
 }
-
-const domainThemes: Record<string, {
-  color: string;
-  bgClass: string;
-  barBg: string;
-  barColor: string;
-  textClass: string;
-  iconBg: string;
-  iconText: string;
-  letter: string;
-}> = {
-  O: {
-    color: '#7C3AED',
-    bgClass: 'bg-violet-50/50 border-violet-100',
-    barBg: 'bg-violet-100',
-    barColor: '#7C3AED',
-    textClass: 'text-violet-900',
-    iconBg: 'bg-violet-100',
-    iconText: 'text-violet-700',
-    letter: 'A' // Abertura
-  },
-  C: {
-    color: '#D97706',
-    bgClass: 'bg-amber-50/50 border-amber-100',
-    barBg: 'bg-amber-100',
-    barColor: '#D97706',
-    textClass: 'text-amber-900',
-    iconBg: 'bg-amber-100',
-    iconText: 'text-amber-700',
-    letter: 'C' // Conscienciosidade
-  },
-  E: {
-    color: '#EF4444',
-    bgClass: 'bg-red-50/50 border-red-100',
-    barBg: 'bg-red-100',
-    barColor: '#EF4444',
-    textClass: 'text-red-900',
-    iconBg: 'bg-red-100',
-    iconText: 'text-red-700',
-    letter: 'E' // Extroversão
-  },
-  A: {
-    color: '#0D9488',
-    bgClass: 'bg-teal-50/50 border-teal-100',
-    barBg: 'bg-teal-100',
-    barColor: '#0D9488',
-    textClass: 'text-teal-900',
-    iconBg: 'bg-teal-100',
-    iconText: 'text-teal-700',
-    letter: 'A' // Amabilidade
-  },
-  N: {
-    color: '#475569',
-    bgClass: 'bg-slate-50/50 border-slate-100',
-    barBg: 'bg-slate-100',
-    barColor: '#475569',
-    textClass: 'text-slate-900',
-    iconBg: 'bg-slate-100',
-    iconText: 'text-slate-700',
-    letter: 'N' // Neuroticismo
-  }
-};
-
-const getIntensityBadge = (scoreText: string) => {
-  if (!scoreText) return null;
-  const text = scoreText.toLowerCase();
-  let label = scoreText;
-  let bg = 'bg-[#FDF2E9] text-[#B45309]';
-  
-  if (text === 'high' || text === 'alta') {
-    label = 'Alta';
-    bg = 'bg-[#FDF2E9] text-[#B45309]';
-  } else if (text === 'low' || text === 'baixa') {
-    label = 'Baixa';
-    bg = 'bg-gray-100 text-gray-700';
-  } else if (text === 'neutral' || text === 'média' || text === 'media') {
-    label = 'Média';
-    bg = 'bg-[#FDF2E9] text-[#B45309]';
-  }
-  
-  return (
-    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${bg}`}>
-      {label}
-    </span>
-  );
-};
 
 export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
   const t = useTranslations('results');
@@ -174,103 +92,49 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
         </div>
       )}
 
-      {/* Visão Geral (Radar Chart) */}
-      <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm mb-8 text-center">
-        <h3 className="text-lg font-bold text-slate-800 mb-4 tracking-wider uppercase">Visão Geral</h3>
-        <RadarChart results={report.results} />
+      {/* ID de visualização rápida e Compartilhamento */}
+      <div className='text-center mt-6 text-sm text-slate-500'>
+        <span className='font-bold text-slate-700'>{t('important')}</span> &nbsp;
+        {t('saveResults')} &nbsp;
+        <Link href={`/compare/?id=${report.id}`} className='underline font-medium text-[#871217] hover:text-[#720f13]'>
+          {t('compare')}
+        </Link>{' '}
+        &nbsp;
+        {t('toOthers')}
       </div>
 
-      {/* Traços Detalhados */}
-      <div className="mb-8">
-        <h3 className="text-lg font-bold text-slate-800 mb-6 tracking-wider uppercase border-b border-slate-100 pb-2">
-          Traços Detalhados
-        </h3>
-        
-        <div className="flex flex-col gap-6">
-          {report.results.map((domain) => {
-            const theme = domainThemes[domain.domain] || domainThemes.O;
-            
-            return (
-              <div key={domain.domain} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-4">
-                {/* Domain Header */}
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    {/* Circle Icon Letter */}
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${theme.iconBg} ${theme.iconText}`}>
-                      {theme.letter}
-                    </div>
-                    <h4 className="text-xl font-bold text-slate-800">{domain.title}</h4>
-                  </div>
-                  {getIntensityBadge(domain.scoreText)}
-                </div>
+      <div className='flex mt-4'>
+        <Snippet
+          hideSymbol
+          color='danger'
+          className='w-full justify-center'
+          size='lg'
+        >
+          {report.id}
+        </Snippet>
+      </div>
 
-                {/* Domain Description */}
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {domain.shortDescription}
-                </p>
+      <div className='flex mt-5 justify-end w-full gap-x-1 print:hidden'>
+        <ShareBar report={report} />
+      </div>
 
-                {/* Score Line */}
-                <div className="flex justify-between items-center text-xs text-slate-400 font-semibold mt-1">
-                  <span>Pontuação: {domain.score}</span>
-                  <span>24–120</span>
-                </div>
-
-                {/* Main Progress Bar */}
-                <div className="w-full bg-slate-100 rounded-full h-2.5">
-                  <div
-                    className="h-2.5 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${Math.max(0, Math.min(100, ((domain.score - 24) / 96) * 100))}%`,
-                      backgroundColor: theme.color
-                    }}
-                  />
-                </div>
-
-                {/* Facets Accordion */}
-                <Accordion className="px-0">
-                  <AccordionItem
-                    key="facets"
-                    aria-label="Ver facetas detalhadas"
-                    title="Ver facetas detalhadas"
-                    classNames={{
-                      title: "text-xs font-bold text-slate-500 hover:text-[#871217] transition-colors cursor-pointer",
-                      trigger: "py-2 border-t border-slate-50 mt-2"
-                    }}
-                  >
-                    <div className="flex flex-col gap-4 mt-2">
-                      {domain.facets && domain.facets.map((facet, fIndex) => (
-                        <div key={fIndex} className="flex flex-col gap-1">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="font-medium text-slate-700">
-                              {domain.domain}{fIndex + 1}: {facet.title}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-slate-400 font-semibold">
-                                {facet.score}/20
-                              </span>
-                              {getIntensityBadge(facet.scoreText)}
-                            </div>
-                          </div>
-                          
-                          {/* Facet Progress Bar */}
-                          <div className="w-full bg-slate-100 rounded-full h-1.5">
-                            <div
-                              className="h-1.5 rounded-full transition-all duration-500"
-                              style={{
-                                width: `${Math.max(0, Math.min(100, ((facet.score - 4) / 16) * 100))}%`,
-                                backgroundColor: theme.color
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-            );
-          })}
+      {/* Visão Geral (Original Bar Chart) */}
+      <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm my-8">
+        <div className='flex border-b border-slate-100 pb-4 mb-4'>
+          <h3 className="text-lg font-bold text-slate-800 tracking-wider uppercase font-serif">
+            {t('theBigFive')}
+          </h3>
         </div>
+        <BarChart max={120} results={report.results} />
+      </div>
+
+      {/* Traços Detalhados (Original Domain Tabs) */}
+      <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm mb-8">
+        <DomainTabs
+          results={report.results}
+          showExpanded={!!showExpanded}
+          scoreText={t('score')}
+        />
       </div>
 
       {/* Ações Finais (Centralizadas no rodapé, ocultas na impressão) */}

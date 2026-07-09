@@ -10,7 +10,7 @@ import { Logo } from '@/components/icons';
 import { ReportLanguageSwitch } from './report-language-switch';
 import { Report } from '@/actions';
 import { Link } from '@/navigation';
-import ShareBar from '@/components/share-bar';
+
 import { DomainTabs } from './domain-tabs';
 
 interface ResultsClientProps {
@@ -114,9 +114,7 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
         </Snippet>
       </div>
 
-      <div className='flex mt-5 justify-end w-full gap-x-1 print:hidden'>
-        <ShareBar report={report} />
-      </div>
+
 
       {/* Visão Geral (Original Bar Chart) */}
       <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm my-8">

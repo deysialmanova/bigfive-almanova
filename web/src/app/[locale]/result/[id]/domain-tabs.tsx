@@ -39,7 +39,7 @@ export const DomainTabs = ({
             <Button
               key={domain}
               onClick={() => setActive(domain)}
-              className={active === domain ? 'bg-primary text-white' : ''}
+              className={active === domain ? 'bg-[#871217] text-white hover:bg-[#871217]/90' : ''}
             >
               {title}
             </Button>

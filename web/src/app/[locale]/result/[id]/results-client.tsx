@@ -41,17 +41,21 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
   return (
     <div className="pb-20 max-w-4xl mx-auto px-4">
       {/* Cabeçalho Almanova (Cores da Marca: Amarelo Ouro e Carmim) */}
-      <div className="bg-[#FFBA1F] text-[#871217] py-8 px-6 text-center border-b-4 border-[#871217] shadow-md rounded-b-2xl mb-8 flex flex-col items-center justify-center gap-2">
-        <div className="flex items-center gap-3">
-          <Logo size={42} className="text-[#871217]" />
-          <h1 className="text-3xl font-extrabold tracking-wider font-serif">Almanova</h1>
+      <div className="bg-[#871217] text-white py-10 px-8 text-center border-b-4 border-[#FFBA1F] shadow-lg rounded-b-2xl mb-8 flex flex-col items-center justify-center gap-4">
+        <div className="flex items-center justify-center bg-white p-2.5 rounded-full shadow-md border border-[#FFBA1F]/30">
+          <Logo size={50} />
         </div>
-        <div className="h-[1px] bg-[#871217]/20 w-1/3 my-1" />
-        <h2 className="text-xl md:text-2xl font-bold tracking-wide mt-1">
-          {report.userInfo?.name ? `${report.userInfo.name} — Perfil Big Five` : 'Perfil Big Five'}
-        </h2>
-        <p className="text-xs font-bold text-[#871217]/80 uppercase tracking-widest">
-          Resultado do teste
+        <div className="space-y-1">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-serif text-[#FFBA1F]">
+            Aqui está o seu Mapa de personalidade
+          </h1>
+          <p className="text-sm font-semibold text-slate-200 tracking-wider">
+            Terapeuta Deysi Dias
+          </p>
+        </div>
+        <div className="h-[1px] bg-[#FFBA1F]/30 w-1/2 my-1" />
+        <p className="text-xs md:text-sm text-slate-100 max-w-2xl leading-relaxed">
+          Big Five é um modelo psicológico cientificamente validado e confiável. O mecanismo de análise utilizado para geração destes resultados tem como base projeto de código aberto sob licença MIT.
         </p>
       </div>
 
@@ -95,19 +99,13 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
       {/* ID de visualização rápida e Compartilhamento */}
       <div className='text-center mt-6 text-sm text-slate-500'>
         <span className='font-bold text-slate-700'>{t('important')}</span> &nbsp;
-        {t('saveResults')} &nbsp;
-        <Link href={`/compare/?id=${report.id}`} className='underline font-medium text-[#871217] hover:text-[#720f13]'>
-          {t('compare')}
-        </Link>{' '}
-        &nbsp;
-        {t('toOthers')}
+        Salve o seguinte ID para visualizar seus resultados posteriormente.
       </div>
 
       <div className='flex mt-4'>
         <Snippet
           hideSymbol
-          color='danger'
-          className='w-full justify-center'
+          className='w-full justify-center bg-amber-50 text-[#871217] border border-[#FFBA1F] font-mono'
           size='lg'
         >
           {report.id}

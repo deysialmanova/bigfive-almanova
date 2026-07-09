@@ -19,7 +19,7 @@ import { siteConfig } from '@/config/site';
 import clsx from 'clsx';
 
 import { ThemeSwitch } from '@/components/theme-switch';
-import { TwitterIcon, GithubIcon, Logo } from '@/components/icons';
+import { Logo } from '@/components/icons';
 import { Link as NextLink } from '../navigation';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -49,6 +49,7 @@ export const Navbar = ({ navItems, navMenuItems }: NavbarProps) => {
       position='sticky'
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
+      className='print:hidden'
     >
       <NavbarContent className='basis-1/5 sm:basis-full' justify='start'>
         <NavbarBrand as='li' className='gap-3 max-w-fit'>
@@ -84,12 +85,6 @@ export const Navbar = ({ navItems, navMenuItems }: NavbarProps) => {
         justify='end'
       >
         <NavbarItem className='hidden sm:flex gap-2'>
-          <Link isExternal href={siteConfig.links.twitter} aria-label='Twitter'>
-            <TwitterIcon className='text-default-500' />
-          </Link>
-          <Link isExternal href={siteConfig.links.github} aria-label='Github'>
-            <GithubIcon className='text-default-500' />
-          </Link>
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem>
@@ -101,11 +96,7 @@ export const Navbar = ({ navItems, navMenuItems }: NavbarProps) => {
         <NavbarItem>
           <LocaleSwitcher />
         </NavbarItem>
-        <NavbarItem>
-          <Link isExternal href={siteConfig.links.github} aria-label='Github'>
-            <GithubIcon className='text-default-500' />
-          </Link>
-        </NavbarItem>
+
         <NavbarItem>
           <ThemeSwitch />
         </NavbarItem>

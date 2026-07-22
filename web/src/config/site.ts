@@ -54,7 +54,7 @@ export const languages: Language[] = [
 export const locales = languages.map((lang) => lang.code) as string[];
 
 export const siteConfig = {
-  name: 'Big Five Personality Test',
+  name: 'Big Five',
   creator: '@maccyber',
   description:
     'Learn to know yourself better with a free, open-source personality test.',

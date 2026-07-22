@@ -9,8 +9,7 @@ const portuguese = {
   },
   frontpage: {
     seo: {
-      title:
-        'Teste BigFive de traços de personalidade gratuito e de código aberto',
+      title: 'Big Five',
       description:
         'Faça gratuitamente um teste de personalidade Big Five de código aberto. Aprenda a conhecer seus traços de personalidade e compare-se com seu parceiro ou parceira, colegas, amigos ou família.'
     },

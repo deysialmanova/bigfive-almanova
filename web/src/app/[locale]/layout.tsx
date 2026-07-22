@@ -29,8 +29,8 @@ export async function generateMetadata({
   const alternatesLang = locales.reduce((a, v) => ({ ...a, [v]: `/${v}` }), {});
   return {
     title: {
-      default: t('seo.title'),
-      template: `%s - ${t('seo.title')}`
+      default: 'Big Five',
+      template: '%s - Big Five'
     },
     description: t('seo.description'),
     keywords: s('keywords'),

@@ -64,7 +64,9 @@
     "rtl-detect": "1.1.2",
     "tailwind-variants": "0.2.1",
     "tailwindcss": "3.4.3",
-    "zod": "3.23.4"
+    "zod": "3.23.4",
+    "@vercel/postgres": "^0.8.0",
+    "pg": "^8.11.5"
   },
   "devDependencies": {
     "@types/canvas-confetti": "1.6.4",
@@ -76,6 +78,7 @@
     "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "9.1.0",
     "prettier": "3.2.5",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "@types/pg": "^8.11.4"
   }
 }

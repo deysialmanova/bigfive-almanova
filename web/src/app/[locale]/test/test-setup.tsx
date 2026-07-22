@@ -3,6 +3,26 @@ import { useEffect } from 'react';
 
 export default function TestSetup() {
   useEffect(() => {
+    // Verificação de identificação obrigatória
+    try {
+      const stored = localStorage.getItem('almanova_user_info');
+      let isValid = false;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.name?.trim() && parsed?.email?.trim()) {
+          isValid = true;
+        }
+      }
+      if (!isValid) {
+        alert('Atenção: É necessário preencher seus dados de identificação antes de iniciar o questionário.');
+        window.location.href = '/';
+        return;
+      }
+    } catch (e) {
+      window.location.href = '/';
+      return;
+    }
+
     // Forçar português brasileiro no documento
     document.documentElement.lang = 'pt-BR';
     

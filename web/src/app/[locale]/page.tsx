@@ -77,6 +77,21 @@ export default function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('almanova_user_info');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.name?.trim() && parsed?.email?.trim()) {
+          setFormData(parsed);
+          setIsRegistered(true);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -84,6 +99,10 @@ export default function HomePage() {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) {
+      alert('Por favor, preencha o seu nome e e-mail antes de avançar.');
+      return;
+    }
     // Armazena no localStorage para recuperar na finalização do teste
     localStorage.setItem('almanova_user_info', JSON.stringify(formData));
     setIsRegistered(true);
@@ -267,6 +286,14 @@ export default function HomePage() {
                 >
                   Começar o Questionário
                 </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setIsRegistered(false)}
+                  className="mt-4 text-xs text-slate-400 hover:text-slate-600 underline block mx-auto transition-colors"
+                >
+                  Alterar meus dados de identificação
+                </button>
               </div>
             )}
           </div>

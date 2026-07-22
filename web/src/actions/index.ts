@@ -1,6 +1,7 @@
 'use server';
 
 import { connectToDatabase } from '@/db';
+import { saveUserResultToPostgres } from '@/db/postgres';
 import { ObjectId } from 'mongodb';
 import { B5Error, DbResult, Feedback } from '@/types';
 import calculateScore from '@bigfive-org/score';
@@ -140,7 +141,24 @@ export async function saveTest(testResult: DbResult) {
       .replace(/\//g, '_')
       .replace(/=/g, '');
 
-    // 2. Dispara o envio de e-mail de forma assíncrona com o payload no link de visualização
+    // 2. Salva automaticamente no banco de dados Postgres no Vercel
+    await saveUserResultToPostgres({
+      id: base64Payload,
+      name: testResult.userInfo?.name || 'Não informado',
+      email: testResult.userInfo?.email || 'Não informado',
+      phone: testResult.userInfo?.phone || null,
+      result: {
+        scores,
+        answers: testResult.answers,
+        lang: testResult.lang,
+        timeElapsed: testResult.timeElapsed,
+        dateStamp: testResult.dateStamp
+      }
+    }).catch((err) => {
+      console.error('Erro ao salvar no Postgres:', err);
+    });
+
+    // 3. Dispara o envio de e-mail de forma assíncrona com o payload no link de visualização
     sendTestResultEmail(testResult, base64Payload).catch(console.error);
 
     return { id: base64Payload };

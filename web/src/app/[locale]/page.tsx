@@ -236,13 +236,33 @@ export default function HomePage() {
                       onChange={handleCountryCodeChange}
                       className="px-3 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#871217] focus:border-transparent transition-colors text-slate-800 bg-slate-50/50 text-sm font-medium cursor-pointer"
                     >
-                      <option value="+55">🇧🇷 +55</option>
-                      <option value="+351">🇵🇹 +351</option>
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+34">🇪🇸 +34</option>
-                      <option value="+44">🇬🇧 +44</option>
-                      <option value="+244">🇦🇴 +244</option>
-                      <option value="+258">🇲🇿 +258</option>
+                      <option value="+55">🇧🇷 +55 (Brasil)</option>
+                      <option value="+351">🇵🇹 +351 (Portugal)</option>
+                      <option value="+1">🇺🇸 +1 (EUA / Canadá)</option>
+                      <option value="+34">🇪🇸 +34 (Espanha)</option>
+                      <option value="+44">🇬🇧 +44 (Reino Unido)</option>
+                      <optgroup label="África Subsaariana">
+                        <option value="+244">🇦🇴 +244 (Angola)</option>
+                        <option value="+258">🇲🇿 +258 (Moçambique)</option>
+                        <option value="+238">🇨🇻 +238 (Cabo Verde)</option>
+                        <option value="+245">🇬🇼 +245 (Guiné-Bissau)</option>
+                        <option value="+239">🇸🇹 +239 (São Tomé e Príncipe)</option>
+                        <option value="+240">🇬🇶 +240 (Guiné Equatorial)</option>
+                        <option value="+27">🇿🇦 +27 (África do Sul)</option>
+                        <option value="+234">🇳🇬 +234 (Nigéria)</option>
+                        <option value="+254">🇰🇪 +254 (Quênia)</option>
+                        <option value="+221">🇸🇳 +221 (Senegal)</option>
+                        <option value="+237">🇨🇲 +237 (Camarões)</option>
+                        <option value="+243">🇨🇩 +243 (R. D. Congo)</option>
+                        <option value="+233">🇬🇭 +233 (Gana)</option>
+                        <option value="+225">🇨🇮 +225 (Costa do Marfim)</option>
+                        <option value="+251">🇪🇹 +251 (Etiópia)</option>
+                        <option value="+255">🇹🇿 +255 (Tanzânia)</option>
+                        <option value="+256">🇺🇬 +256 (Uganda)</option>
+                        <option value="+264">🇳🇦 +264 (Namíbia)</option>
+                        <option value="+260">🇿🇲 +260 (Zâmbia)</option>
+                        <option value="+263">🇿🇼 +263 (Zimbábue)</option>
+                      </optgroup>
                       <option value="">Outro</option>
                     </select>
                     <input

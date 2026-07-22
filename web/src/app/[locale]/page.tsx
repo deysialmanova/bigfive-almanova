@@ -5,6 +5,45 @@ import { Link } from '@/navigation';
 export default function HomePage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [isRegistered, setIsRegistered] = useState(false);
+  const [countryCode, setCountryCode] = useState('+55');
+  const [localPhone, setLocalPhone] = useState('');
+
+  // Formata o número brasileiro: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+  const formatBrazilianPhone = (value: string) => {
+    const clean = value.replace(/\D/g, '');
+    if (clean.length <= 2) return clean;
+    if (clean.length <= 6) return `(${clean.slice(0, 2)}) ${clean.slice(2)}`;
+    if (clean.length <= 10) return `(${clean.slice(0, 2)}) ${clean.slice(2, 6)}-${clean.slice(6)}`;
+    return `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7, 11)}`;
+  };
+
+  const handleLocalPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value;
+    if (countryCode === '+55') {
+      val = formatBrazilianPhone(val);
+    }
+    setLocalPhone(val);
+  };
+
+  const handleCountryCodeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    setCountryCode(code);
+    if (code === '+55') {
+      setLocalPhone((prev) => formatBrazilianPhone(prev));
+    } else {
+      setLocalPhone((prev) => prev.replace(/\D/g, ''));
+    }
+  };
+
+  useEffect(() => {
+    const trimmedLocal = localPhone.trim();
+    if (!trimmedLocal) {
+      setFormData((prev) => ({ ...prev, phone: '' }));
+    } else {
+      const formattedPhone = countryCode ? `${countryCode} ${trimmedLocal}` : trimmedLocal;
+      setFormData((prev) => ({ ...prev, phone: formattedPhone }));
+    }
+  }, [countryCode, localPhone]);
 
   useEffect(() => {
     // Ocultar cabeçalho, rodapé e menu de navegação originais na página inicial
@@ -170,18 +209,33 @@ export default function HomePage() {
 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Telefone / WhatsApp
+                    Telefone / WhatsApp <span className="text-slate-400 font-normal text-xs">(Opcional)</span>
                   </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="(00) 00000-0000"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#871217] focus:border-transparent transition-colors text-slate-800 bg-slate-50/50"
-                  />
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={handleCountryCodeChange}
+                      className="px-3 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#871217] focus:border-transparent transition-colors text-slate-800 bg-slate-50/50 text-sm font-medium cursor-pointer"
+                    >
+                      <option value="+55">🇧🇷 +55</option>
+                      <option value="+351">🇵🇹 +351</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+34">🇪🇸 +34</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+244">🇦🇴 +244</option>
+                      <option value="+258">🇲🇿 +258</option>
+                      <option value="">Outro</option>
+                    </select>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={localPhone}
+                      onChange={handleLocalPhoneChange}
+                      placeholder={countryCode === '+55' ? '(11) 99999-9999' : 'Número de telefone'}
+                      className="flex-1 px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#871217] focus:border-transparent transition-colors text-slate-800 bg-slate-50/50"
+                    />
+                  </div>
                 </div>
 
                 <button

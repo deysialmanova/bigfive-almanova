@@ -90,7 +90,7 @@ export const ResultsClient = ({ report, showExpanded }: ResultsClientProps) => {
             </div>
             <div>
               <span className="font-semibold text-slate-800">Telefone / WhatsApp: </span> 
-              {report.userInfo.phone}
+              {report.userInfo.phone || 'Não informado'}
             </div>
           </div>
         </div>

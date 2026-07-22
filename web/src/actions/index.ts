@@ -24,7 +24,7 @@ export type Report = {
   userInfo?: {
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
   };
 };
 

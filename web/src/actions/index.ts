@@ -1,7 +1,7 @@
 'use server';
 
 import { connectToDatabase } from '@/db';
-import { saveUserResultToPostgres } from '@/db/postgres';
+import { saveLeadToPostgres } from '@/db/postgres';
 import { ObjectId } from 'mongodb';
 import { B5Error, DbResult, Feedback } from '@/types';
 import calculateScore from '@bigfive-org/score';
@@ -141,21 +141,36 @@ export async function saveTest(testResult: DbResult) {
       .replace(/\//g, '_')
       .replace(/=/g, '');
 
-    // 2. Salva automaticamente no banco de dados Postgres no Vercel
-    await saveUserResultToPostgres({
+    // 2. Prepara a síntese dos fatores (SEM salvar as 120 respostas individuais)
+    const calculatedScores = calculateScore({ answers: testResult.answers as any });
+    const domainResults = generateResult({ lang: testResult.lang, scores: calculatedScores });
+
+    const resultadoSintese = {
+      lang: testResult.lang,
+      tempoDecorridoSegundos: testResult.timeElapsed,
+      fatores: domainResults.map((domain) => ({
+        dominio: domain.domain,
+        titulo: domain.title,
+        pontuacao: domain.score,
+        contagem: domain.count,
+        textoPontuacao: domain.scoreText,
+        descricaoCurta: domain.shortDescription
+      }))
+    };
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://bigfive-almanova.vercel.app';
+    const relatorioPdf = `${appUrl}/result/${base64Payload}`;
+
+    // Salva na tabela leads no Supabase/Postgres
+    await saveLeadToPostgres({
       id: base64Payload,
-      name: testResult.userInfo?.name || 'Não informado',
+      nome: testResult.userInfo?.name || 'Não informado',
       email: testResult.userInfo?.email || 'Não informado',
-      phone: testResult.userInfo?.phone || null,
-      result: {
-        scores,
-        answers: testResult.answers,
-        lang: testResult.lang,
-        timeElapsed: testResult.timeElapsed,
-        dateStamp: testResult.dateStamp
-      }
+      telefone: testResult.userInfo?.phone || null,
+      relatorioPdf,
+      resultadoSintese
     }).catch((err) => {
-      console.error('Erro ao salvar no Postgres:', err);
+      console.error('Erro ao salvar lead no Supabase Postgres:', err);
     });
 
     // 3. Dispara o envio de e-mail de forma assíncrona com o payload no link de visualização

@@ -12,7 +12,7 @@ export function getPgPool(): Pool {
 
   if (!connectionString) {
     console.warn(
-      'Aviso: Nenhuma variável POSTGRES_URL foi encontrada nas variáveis de ambiente.'
+      'Aviso: Nenhuma variável de conexão PostgreSQL (POSTGRES_URL) foi encontrada.'
     );
   }
 
@@ -26,69 +26,73 @@ export function getPgPool(): Pool {
   return pool;
 }
 
-export async function ensureUserResultsTableExists() {
+export async function ensureLeadsTableExists() {
   const p = getPgPool();
   const client = await p.connect();
   try {
     await client.query(`
-      CREATE TABLE IF NOT EXISTS user_results (
+      CREATE TABLE IF NOT EXISTS leads (
         id VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        nome VARCHAR(255) NOT NULL,
+        telefone VARCHAR(100),
         email VARCHAR(255) NOT NULL,
-        phone VARCHAR(100),
-        result JSONB NOT NULL,
+        relatorio_pdf TEXT,
+        resultado_sintese JSONB NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `);
   } catch (error) {
-    console.error('Erro ao garantir existência da tabela user_results no Postgres:', error);
+    console.error('Erro ao garantir existência da tabela leads no banco de dados:', error);
     throw error;
   } finally {
     client.release();
   }
 }
 
-export async function saveUserResultToPostgres({
+export async function saveLeadToPostgres({
   id,
-  name,
+  nome,
   email,
-  phone,
-  result
+  telefone,
+  relatorioPdf,
+  resultadoSintese
 }: {
   id: string;
-  name: string;
+  nome: string;
   email: string;
-  phone?: string | null;
-  result: any;
+  telefone?: string | null;
+  relatorioPdf: string;
+  resultadoSintese: any;
 }) {
   try {
-    await ensureUserResultsTableExists();
+    await ensureLeadsTableExists();
 
     const p = getPgPool();
     const client = await p.connect();
     try {
-      const resultJson = JSON.stringify(result);
-      const phoneVal = phone || null;
+      const sinteseJson = JSON.stringify(resultadoSintese);
+      const phoneVal = telefone || null;
 
       await client.query(
         `
-        INSERT INTO user_results (id, name, email, phone, result, created_at)
-        VALUES ($1, $2, $3, $4, $5::jsonb, NOW())
+        INSERT INTO leads (id, nome, email, telefone, relatorio_pdf, resultado_sintese, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6::jsonb, NOW())
         ON CONFLICT (id) DO UPDATE
-        SET name = EXCLUDED.name,
+        SET nome = EXCLUDED.nome,
             email = EXCLUDED.email,
-            phone = EXCLUDED.phone,
-            result = EXCLUDED.result;
+            telefone = EXCLUDED.telefone,
+            relatorio_pdf = EXCLUDED.relatorio_pdf,
+            resultado_sintese = EXCLUDED.resultado_sintese;
         `,
-        [id, name, email, phoneVal, resultJson]
+        [id, nome, email, phoneVal, relatorioPdf, sinteseJson]
       );
 
-      console.log(`[Postgres] Resultado de ${name} (${email}) salvo com sucesso na tabela user_results!`);
+      console.log(`[Supabase DB] Lead e Síntese de ${nome} (${email}) salvos com sucesso na tabela 'leads'!`);
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('[Postgres] Falha ao salvar resultado no banco de dados:', error);
+    console.error('[Supabase DB] Falha ao salvar lead na tabela leads:', error);
     throw error;
   }
 }
